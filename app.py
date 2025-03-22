@@ -195,7 +195,7 @@ def chatbot():
     return render_template('chatbot.html')
 
 # Load the trained model
-model = tf.keras.models.load_model(r'Chatbot\chatbot_model_cleaned.h5')
+model = tf.keras.models.load_model(r'Chatbot/chatbot_model_cleaned.h5')
 
 # Load the tokenizer
 with open(r'Chatbot\tokenizer.pickle', 'rb') as handle:
