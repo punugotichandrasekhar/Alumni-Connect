@@ -1,8 +1,4 @@
-Package                      Version
----------------------------- -----------
-
 python==3.10.8
-
 Flask==3.0.3
 mysql-connector-python==9.1.0
 numpy==1.26.0
