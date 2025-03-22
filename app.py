@@ -190,44 +190,12 @@ def achiever():
     return render_template('achiever.html', acheiver_data = acheiver_list)
 
 
-@app.route('/chatbot')
-def chatbot():
-    return render_template('chatbot.html')
-
-# Load the trained model
-model = tf.keras.models.load_model(r'Chatbot/chatbot_model_cleaned.h5')
-
-# Load the tokenizer
-with open(r'Chatbot\tokenizer.pickle', 'rb') as handle:
-    tokenizer = pickle.load(handle)
-
-# Load the LabelEncoder
-with open(r'Chatbot\label_encoder.pickle', 'rb') as file:
-    le = pickle.load(file)
-
-# Load the cleaned data with responses
-cleaned_data = pd.read_excel(r'Chatbot\enhanced_chatbot_intents_reference.xlsx')
 
 # Preprocess the input text for prediction
 def preprocess_input(text, tokenizer, max_len):
     encoded_text = tokenizer.texts_to_sequences([text.lower().strip()])  # Ensure input is lowercase and clean
     padded_text = pad_sequences(encoded_text, maxlen=max_len, padding='post')
     return padded_text
-
-# Make a prediction and get the chatbot response
-def predict_response(text):
-    max_len = model.input_shape[1]  # Get the max length from the model's input shape
-    padded_text = preprocess_input(text, tokenizer, max_len)
-
-    prediction = model.predict(padded_text)
-    predicted_class = np.argmax(prediction, axis=1)[0]
-    predicted_intent = le.inverse_transform([predicted_class])[0]
-
-    responses = cleaned_data[cleaned_data['Intent'] == predicted_intent]['Chatbot Response'].values
-    if len(responses) > 0:
-        return np.random.choice(responses)  # Randomly select a response if multiple exist
-    else:
-        return None  # Return None if no known intent is found
 
 # Function to extract the user's name from the input
 def extract_name(user_input):
@@ -349,12 +317,7 @@ def accept_alumni_requests(id):
     values = ("accepted", id)
     executionquery(query, values)
 
-    query = "SELECT * FROM alumni WHERE id = %s"
-    values = (id,)
-    data = retrivequery1(query, values)
-    recipient = data[0][2]
-
-    # recipient = session["user_email"] 
+    recipient = session["user_email"] 
     subject = 'Registration request accepted!'
     body = 'Congruatulations! Your request for registration as an alumni accepted by admin!'
 
@@ -378,12 +341,7 @@ def reject_alumni_requests(id):
     values = (id,)
     executionquery(query, values)
 
-    query = "SELECT * FROM alumni WHERE id = %s"
-    values = (id,)
-    data = retrivequery1(query, values)
-    recipient = data[0][2]
-
-    # recipient = session["user_email"] 
+    recipient = session["user_email"] 
     subject = 'Registration request rejected!'
     body = 'Your request for registration as an alumni rejected by admin!'
 
